@@ -13,12 +13,12 @@ WEB_DIR='/var/www/vtiger'
 WEB_USER='www-data'
 USER='www-data'
 zone='Europe\/Amsterdam'		# Time zone that will be auto selected when running setup make sure to inlcude the \ I recommend to leave this as is and change it during the setup.
+					# you can find list of zones supported by vtiger at: https://discussions.vtiger.com/discussion/190812/time-zone-setting-list-is-empty
 currency='Euro'				# Currency that will be auto selected when running setup Ex. Jamaica, Dollars | Isle of Man, Pounds | Iran, Rials | USA, Dollars | Netherlands Antilles, Guilders etc. If unsure, leave it as is, and change during setup.
 date='dd-mm-yyyy'			# Date format that will be auto selected when running setup
 date2='"dd-mm-yyyy"'			# Date format with  make sure to fill this one is as well must be the same as date
 vtigeradmin='password'			# Password for the default admin user
-rootpasswd='MYSQLROOTPASS'	# root password mysql used for making database
-charset='utf8'				# Charset for db, vtiger uses utf8
+rootpasswd='MYSQLROOTPASS'		# root password mysql used for making database
 domain='example.com'
 
 # Do NOT edit the following variables!!!
@@ -31,6 +31,7 @@ fastcgi_script_name='$fastcgi_script_name'
 defaultzone='America\/Los_Angeles'
 defaultcurrency='USA, Dollars'
 defaultdate='"mm-dd-yyyy"'
+
 # Sanity check
 [ $(id -g) != "0" ] && die "Script must be run as root."
 [ $# != "1" ] && die "Usage: $(basename $0) domainName"
@@ -40,7 +41,7 @@ cat > $NGINX_AVAILABLE_VHOSTS/$1 <<EOF
 # www to non-www
 server {
     listen 80;
-    # If user goes to www direc them to non www
+    # If user goes to www direct them to non www
     server_name *.$domain;
     return 301 $NGINX_SCHEME://$1$NGINX_REQUEST_URI;
 }
@@ -104,9 +105,11 @@ echo "successfully created database username password"
 
 
         echo "Creating new MySQL database..."
-        mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${dbname} /*\!40100 DEFAULT CHARACTER SET ${charset} */;"
+        mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${dbname} /*\!40100 DEFAULT CHARACTER SET utf8 */;"
         echo "Database successfully created!"
-        echo "Creating new user..."
+        echo "alterdatabase to use utf8_general_ci"
+	mysql -uroot -p${rootpasswd} -e "ALTER DATABASE ${dbname} CHARACTER SET utf8 COLLATE utf8_general_ci;"
+	echo "Creating new user..."
         mysql -uroot -p${rootpasswd} -e "CREATE USER ${MAINDB}@localhost IDENTIFIED BY '${PASSWDDB}';"
         echo "User successfully created!"
         echo "Granting ALL privileges on ${dbname} to ${MAINDB}!"
@@ -131,7 +134,7 @@ echo "Changing default currency..."
 
 sed -i "0,/USA, Dollars/s//$currency/" $WEB_DIR/$1/layouts/v7/modules/Install/Step4.tpl
 
-# change the default date. NOTE: The default date (mm-dd-yyyy) will be replaced by the value provided in $date & $date2, if you need to edit this back to the default value, you have manually edit the file.
+# change the default date. NOTE: The default date (mm-dd-yyyy) will be replaced by the value provided in $date & $date2, if you need to edit this back to the default value, you have to manually edit the file.
 
 echo "Changing default date..."
 
