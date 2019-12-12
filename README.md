@@ -6,7 +6,8 @@ Is makes a server block and creates a mysql database. Then it puts the DB creden
 Installation steps:
 
 1. Download the latest vtiger tar. Current is vtigercrm7.2.0.tar.gz
-2. Extract it. You now have a vtigercrm directory, you can possibly move it to you web directory (ex /var/www/vtiger) Do not change the name of the file!!
+2. Extract it. You now have a vtigercrm directory, you can possibly move it to you web directory (ex /var/www/vtiger) 
+Do not change the name of the file!!
 3. sudo chmod +x script.sh. To make it executable.
 4. Edit the variables in script.sh according to you needs.
 
