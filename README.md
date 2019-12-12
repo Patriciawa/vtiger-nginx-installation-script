@@ -1,6 +1,7 @@
 Vtiger installation script for nginx
+Tested on debian 9. but should also work on debian 10, ubuntu 16/18.
 
-Is makes a server block and creates a mysql database. Then it puts the DB credentials inside the setup.
+It makes a server block and creates a mysql database. Then it puts the DB credentials inside the setup.
 
 
 Installation steps:
