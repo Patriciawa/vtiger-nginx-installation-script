@@ -158,4 +158,4 @@ echo "All done!"
 chown -R $USER:$WEB_USER $WEB_DIR/$1
 service nginx restart
 
-echo "Permissions are changed and nginx has been restarted, you may sleep now."
+echo "Permissions are changed and nginx has been restarted."
