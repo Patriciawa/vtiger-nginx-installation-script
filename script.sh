@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-#
-# Nginx - new server block
+
 
 # Functions
 ok() { echo -e '\e[32m'$1'\e[m'; } # Green
 
 
-# Variables
+# Variables, change them accoriding to your needs
 NGINX_AVAILABLE_VHOSTS='/etc/nginx/sites-available'
 NGINX_ENABLED_VHOSTS='/etc/nginx/sites-enabled'
 WEB_DIR='/var/www/vtiger'
@@ -37,7 +36,7 @@ defaultdate='"mm-dd-yyyy"'
 [ $# != "1" ] && die "Usage: $(basename $0) domainName"
 
 # Create nginx config file
-cat > $NGINX_AVAILABLE_VHOSTS/$1 <<EOF
+cat > $NGINX_AVAILABLE_VHOSTS/$1 <<EOF # Start server block info
 # www to non-www
 server {
     listen 80;
@@ -60,7 +59,7 @@ location / {
 }
     location ~ \.php$ { 
 include snippets/fastcgi-php.conf; 
-fastcgi_pass unix:/var/run/php/php7.1-fpm.sock; 
+fastcgi_pass unix:/var/run/php/php7.1-fpm.sock; # You might want to change the PHP version to 7.3
 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; 
 include fastcgi_params;
 fastcgi_read_timeout 600; 
@@ -68,6 +67,7 @@ proxy_connect_timeout 600;
 proxy_send_timeout 600; 
 proxy_read_timeout 600;
 send_timeout 600;
+client_max_body_size 50M; 
 }
   }
 EOF
@@ -85,7 +85,7 @@ echo "Succesfully copied contents to web dir"
 # Changing permissions
 chown -R $USER:$WEB_USER $WEB_DIR/$1
 
-# Enable site by creating symbolic link
+// Enable site by creating symbolic link
 ln -s $NGINX_AVAILABLE_VHOSTS/$1 $NGINX_ENABLED_VHOSTS/$1
 
 echo "serverblocks done"
@@ -159,6 +159,6 @@ sed -i "0,/class="col-sm-6"/s//text-align:center/" $WEB_DIR/$1/layouts/v7/module
 echo "All done!"
 
 chown -R $USER:$WEB_USER $WEB_DIR/$1
-service nginx restart
+service nginx restart # Or change restart to reload, if you don't want to restart NGINX
 
 echo "Permissions are changed and nginx has been restarted."
